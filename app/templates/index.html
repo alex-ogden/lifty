@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" type="text/css" href="../static/styles/index.css">
+    <!-- iOS support -->
+    <link rel="apple-touch-icon" href="images/icons/icon-72x72.png" />
+    <link rel="apple-touch-icon" href="images/icons/icon-96x96.png" />
+    <link rel="apple-touch-icon" href="images/icons/icon-128x128.png" />
+    <link rel="apple-touch-icon" href="images/icons/icon-192x192.png" />
+    <meta name="apple-mobile-web-app-status-bar" content="#BB86FC" />
+    <meta name="theme-color" content="#BB86FC" />
+    <title>Lifty - Workouts</title>
+</head>
+<body>
+    <h1>Your Workouts</h1>
+
+    <!-- Form to Add New Workout -->
+    <form id="workout-form">
+        <input type="text" id="name" name="name" placeholder="Workout Name" required>
+        <textarea id="description" name="description" placeholder="Description (optional)"></textarea>
+        <button type="submit">Add Workout</button>
+    </form>
+
+    <!-- List of Workouts -->
+    <div id="workouts">
+        {% for workout in workouts %}
+            <div class="workout">
+                <a href="/workout/{{ workout['id'] }}">{{ workout['name'] }}</a>
+                <p>{{ workout['description'] }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        document.getElementById('workout-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('/add_workout', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload(); // Refresh the page to show the new workout
+                } else {
+                    alert('Failed to add workout');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ exercise['name'] }} Details</title>
+    <link rel="stylesheet" type="text/css" href="../static/styles/index.css">
+</head>
+<body>
+    <!-- Back Button -->
+    <a href="/workout/{{ exercise['workout_id'] }}" class="back-button">Back to Workout</a>
+
+    <h1>{{ exercise['name'] }}</h1>
+
+    <!-- Form to Add New Set -->
+    <form id="set-form">
+        <input type="hidden" name="exercise_id" value="{{ exercise['id'] }}">
+        <input type="number" id="reps" name="reps" placeholder="Reps" required>
+        <input type="number" id="weight" name="weight" placeholder="Weight" required>
+        <textarea id="notes" name="notes" placeholder="Notes (optional)"></textarea>
+        <input type="hidden" id="date" name="date">
+        <button type="submit">Add Set</button>
+    </form>
+
+    <!-- List of Sets -->
+    <div id="sets">
+        {% for set in sets %}
+            <div class="set">
+                <p>Reps: {{ set['reps'] }}</p>
+                <p>Weight: {{ set['weight'] }}</p>
+                <p>Date: {{ set['date'] }}</p>
+                <p>Notes: {{ set['notes'] or 'N/A' }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        // Function to set the current date and time
+        function getCurrentDateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+
+        // Set the current date and time when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('date').value = getCurrentDateTime();
+        });
+
+        // Handle form submission
+        document.getElementById('set-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('/add_set', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Create a new set element
+                    const setsDiv = document.getElementById('sets');
+                    const newSetDiv = document.createElement('div');
+                    newSetDiv.className = 'set';
+                    newSetDiv.innerHTML = `
+                        <p>Reps: ${formData.get('reps')}</p>
+                        <p>Weight: ${formData.get('weight')}</p>
+                        <p>Date: ${formData.get('date')}</p>
+                        <p>Notes: ${formData.get('notes') || 'N/A'}</p>
+                    `;
+                    setsDiv.appendChild(newSetDiv);
+                    
+                    // Clear the form
+                    this.reset();
+                    document.getElementById('date').value = getCurrentDateTime(); // Update date for next set
+                } else {
+                    alert('Failed to add set');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
