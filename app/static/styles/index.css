@@ -91,11 +91,18 @@ button:hover {
   margin-bottom: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s, box-shadow 0.3s;
+  text-align: center;
 }
 
 .workout:hover {
   transform: scale(1.02);
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+/* Exercises list */
+#exercises {
+  width: 100%; /* Full width on mobile */
+  max-width: 400px;
 }
 
 .exercise {
@@ -106,11 +113,18 @@ button:hover {
   margin-bottom: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s, box-shadow 0.3s;
+  text-align: center;
 }
 
 .exercise:hover {
   transform: scale(1.02);
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+/* Sets list */
+#sets {
+  width: 100%; /* Full width on mobile */
+  max-width: 400px;
 }
 
 .set {
@@ -149,6 +163,18 @@ button:hover {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* Remove default link styling */
+a {
+  color: inherit; /* Inherit the color of the parent element */
+  text-decoration: none; /* Remove underline */
+}
+
+/* Optional: Add hover effect if desired */
+a:hover {
+  color: #BB86FC; /* Or any color you prefer */
+  text-decoration: underline; /* Optional: Add underline on hover */
+}
+
 /* Responsive Design */
 @media (max-width: 600px) {
   h1 {
@@ -161,10 +187,6 @@ button:hover {
   textarea,
   button {
       font-size: 1em; /* Adjust font size for better readability on smaller screens */
-  }
-
-  button {
-      padding: 10px;
   }
 
   .back-button {

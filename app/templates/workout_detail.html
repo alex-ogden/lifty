@@ -7,11 +7,11 @@
     <link rel="stylesheet" type="text/css" href="../static/styles/index.css">
 </head>
 <body>
-    <!-- Back Button -->
-    <a href="/" class="back-button">Back to Home</a>
-
     <h1>{{ workout['name'] }}</h1>
     <p>{{ workout['description'] }}</p>
+
+    <!-- Back Button -->
+    <a href="/" class="back-button">Back to Home</a>
 
     <!-- Form to Add New Exercise -->
     <form id="exercise-form">
@@ -25,6 +25,10 @@
         {% for exercise in exercises %}
             <div class="exercise">
                 <a href="/exercise/{{ exercise['id'] }}">{{ exercise['name'] }}</a>
+                <!-- Delete Exercise Button -->
+                <form id="delete-exercise" action="{{ url_for('delete_exercise', exercise_id=exercise['id']) }}" method="post" style="display:inline;">
+                    <button type="submit">Delete Exercise</button>
+                </form>
             </div>
         {% endfor %}
     </div>

@@ -24,12 +24,14 @@
         <button type="submit">Add Workout</button>
     </form>
 
-    <!-- List of Workouts -->
     <div id="workouts">
         {% for workout in workouts %}
             <div class="workout">
-                <a href="/workout/{{ workout['id'] }}">{{ workout['name'] }}</a>
-                <p>{{ workout['description'] }}</p>
+                <a href="{{ url_for('workout_detail', workout_id=workout['id']) }}">{{ workout['name'] }}</a>
+                <!-- Delete Workout Button -->
+                <form id="delete-workout" action="{{ url_for('delete_workout', workout_id=workout['id']) }}" method="post" style="display:inline;">
+                    <button type="submit">Delete Workout</button>
+                </form>
             </div>
         {% endfor %}
     </div>

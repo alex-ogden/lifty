@@ -7,10 +7,10 @@
     <link rel="stylesheet" type="text/css" href="../static/styles/index.css">
 </head>
 <body>
+    <h1>{{ exercise['name'] }}</h1>
+
     <!-- Back Button -->
     <a href="/workout/{{ exercise['workout_id'] }}" class="back-button">Back to Workout</a>
-
-    <h1>{{ exercise['name'] }}</h1>
 
     <!-- Form to Add New Set -->
     <form id="set-form">
@@ -22,14 +22,23 @@
         <button type="submit">Add Set</button>
     </form>
 
-    <!-- List of Sets -->
+    <!-- List of Sets Grouped by Date -->
     <div id="sets">
-        {% for set in sets %}
-            <div class="set">
-                <p>Reps: {{ set['reps'] }}</p>
-                <p>Weight: {{ set['weight'] }}</p>
-                <p>Date: {{ set['date'] }}</p>
-                <p>Notes: {{ set['notes'] or 'N/A' }}</p>
+        {% for date, sets in sets_by_date.items() %}
+            <div class="set-group">
+                <h3>{{ date.strftime('%B %d, %Y') }}</h3> <!-- Display the date in a readable format -->
+                {% for set in sets %}
+                    <div class="set">
+                        <p>Reps: {{ set['reps'] }}</p>
+                        <p>Weight: {{ set['weight'] }}</p>
+                        <p>Date: {{ set['date'] }}</p>
+                        <p>Notes: {{ set['notes'] or 'N/A' }}</p>
+                        <!-- Delete Set Button -->
+                        <form id="delete-set" action="{{ url_for('delete_set', set_id=set['id']) }}" method="post" style="display:inline;">
+                            <button type="submit">Delete Set</button>
+                        </form>
+                    </div>
+                {% endfor %}
             </div>
         {% endfor %}
     </div>
@@ -81,6 +90,7 @@
                 } else {
                     alert('Failed to add set');
                 }
+                window.location.reload(); // Refresh the page to show delete button
             });
         });
     </script>

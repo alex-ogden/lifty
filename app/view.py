@@ -1,6 +1,10 @@
-from flask import render_template, jsonify, request
-import sqlite3
 from app import app
+
+from flask import render_template, jsonify, request, redirect
+from collections import defaultdict
+from datetime import datetime
+
+import sqlite3
 
 # Helper function to get database connection
 def get_db_connection():
@@ -29,7 +33,19 @@ def exercise_detail(exercise_id):
     exercise = conn.execute('SELECT * FROM exercises WHERE id = ?', (exercise_id,)).fetchone()
     sets = conn.execute('SELECT * FROM sets WHERE exercise_id = ?', (exercise_id,)).fetchall()
     conn.close()
-    return render_template("exercise_detail.html", exercise=exercise, sets=sets)
+
+    # Group sets by date
+    sets_by_date = defaultdict(list)
+    for set in sets:
+        # Convert the date string to a date object (assuming it's in the format 'YYYY-MM-DD HH:MM:SS')
+        date_str = set['date']
+        date_obj = datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S').date()
+        sets_by_date[date_obj].append(set)
+
+    # Convert defaultdict to a regular dict and sort by date
+    sorted_sets_by_date = dict(sorted(sets_by_date.items(), reverse=True))
+
+    return render_template("exercise_detail.html", exercise=exercise, sets_by_date=sorted_sets_by_date)
 
 @app.route("/add_workout", methods=["POST"])
 def add_workout():
@@ -73,3 +89,39 @@ def add_set():
     conn.close()
 
     return jsonify({'success': True})
+
+@app.route("/delete_set/<int:set_id>", methods=["POST"])
+def delete_set(set_id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM sets WHERE id = ?', (set_id,))
+    conn.commit()
+    conn.close()
+    # Redirect back to the exercise detail page
+    return redirect(request.referrer)
+
+@app.route("/delete_exercise/<int:exercise_id>", methods=["POST"])
+def delete_exercise(exercise_id):
+    conn = get_db_connection()
+    # First, delete all sets associated with this exercise
+    conn.execute('DELETE FROM sets WHERE exercise_id = ?', (exercise_id,))
+    # Then, delete the exercise itself
+    conn.execute('DELETE FROM exercises WHERE id = ?', (exercise_id,))
+    conn.commit()
+    conn.close()
+    # Redirect back to the workout detail page
+    return redirect(request.referrer)
+
+@app.route("/delete_workout/<int:workout_id>", methods=["POST"])
+def delete_workout(workout_id):
+    conn = get_db_connection()
+    # First, delete all exercises and their sets associated with this workout
+    exercises = conn.execute('SELECT id FROM exercises WHERE workout_id = ?', (workout_id,)).fetchall()
+    for exercise in exercises:
+        conn.execute('DELETE FROM sets WHERE exercise_id = ?', (exercise['id'],))
+    conn.execute('DELETE FROM exercises WHERE workout_id = ?', (workout_id,))
+    # Then, delete the workout itself
+    conn.execute('DELETE FROM workouts WHERE id = ?', (workout_id,))
+    conn.commit()
+    conn.close()
+    # Redirect back to the main page
+    return redirect("/")
