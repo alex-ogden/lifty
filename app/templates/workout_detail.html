@@ -7,11 +7,14 @@
     <link rel="stylesheet" type="text/css" href="../static/styles/index.css">
 </head>
 <body>
-    <h1>{{ workout['name'] }}</h1>
-    <p>{{ workout['description'] }}</p>
+    <!-- Header with Back Button and Title -->
+    <div class="header">
+        <!-- Back Button -->
+        <a href="/" class="back-button">Back to Home</a>
+        <h1>{{ workout['name'] }}</h1>
+        <p>{{ workout['description'] }}</p>
+    </div>
 
-    <!-- Back Button -->
-    <a href="/" class="back-button">Back to Home</a>
 
     <!-- Form to Add New Exercise -->
     <form id="exercise-form">

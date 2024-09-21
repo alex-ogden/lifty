@@ -7,16 +7,18 @@
     <link rel="stylesheet" type="text/css" href="../static/styles/index.css">
 </head>
 <body>
-    <h1>{{ exercise['name'] }}</h1>
-
-    <!-- Back Button -->
-    <a href="/workout/{{ exercise['workout_id'] }}" class="back-button">Back to Workout</a>
+    <!-- Header with Back Button and Title -->
+    <div class="header">
+        <!-- Back Button -->
+        <a href="/workout/{{ exercise['workout_id'] }}" class="back-button">Back to Workout</a>
+        <h1 class="title">{{ exercise['name'] }}</h1>
+    </div>
 
     <!-- Form to Add New Set -->
     <form id="set-form">
         <input type="hidden" name="exercise_id" value="{{ exercise['id'] }}">
         <input type="number" id="reps" name="reps" placeholder="Reps" required>
-        <input type="number" id="weight" name="weight" placeholder="Weight" required>
+        <input type="number" id="weight" name="weight" step="0.01" min="0" placeholder="Weight" required>
         <textarea id="notes" name="notes" placeholder="Notes (optional)"></textarea>
         <input type="hidden" id="date" name="date">
         <button type="submit">Add Set</button>
@@ -30,7 +32,7 @@
                 {% for set in sets %}
                     <div class="set">
                         <p>Reps: {{ set['reps'] }}</p>
-                        <p>Weight: {{ set['weight'] }}</p>
+                        <p>Weight: {{ set['weight'] }}kg</p>
                         <p>Date: {{ set['date'] }}</p>
                         <p>Notes: {{ set['notes'] or 'N/A' }}</p>
                         <!-- Delete Set Button -->
@@ -78,7 +80,7 @@
                     newSetDiv.className = 'set';
                     newSetDiv.innerHTML = `
                         <p>Reps: ${formData.get('reps')}</p>
-                        <p>Weight: ${formData.get('weight')}</p>
+                        <p>Weight: ${formData.get('weight')}kg</p>
                         <p>Date: ${formData.get('date')}</p>
                         <p>Notes: ${formData.get('notes') || 'N/A'}</p>
                     `;
